@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Filmy Duniya</title>
+    <link
+      rel="icon"
+      href="https://w7.pngwing.com/pngs/572/603/png-transparent-logo-brand-com-student-creative-slate-text-logo-film-thumbnail.png"
+      type="image/icon type"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-image: url("https://img.etimg.com/thumb/width-1200,height-900,imgsize-441780,resizemode-1,msid-81387963/magazines/panache/women-hold-just-8-key-hod-positions-in-indian-film-industry.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      .container {
+        padding: 10px;
+        width: 800px;
+        min-height: 750px;
+        border-radius: 5px;
+        margin: 20px auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #252525;
+        color: white;
+        font-size: 18px;
+        box-shadow: -5px -5px 10px rgb(68, 68, 68), 5px 5px 10px rgb(68, 68, 68);
+      }
+      button {
+        width: 100px;
+        height: 25px;
+        border-radius: 12px;
+      }
+      input {
+        width: 500px;
+        height: 30px;
+        border: none;
+        outline: none;
+        border-radius: 15px;
+        margin: 10px 0;
+        padding-left: 20px;
+        font-size: 16px;
+      }
+      #data > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        padding: 10px;
+        gap: 10px;
+      }
+      .errorImg{
+          display: none;
+      }
+      .errorImg> img{
+          width:100%;
+          margin:auto;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Filmy Duniya</h1>
+      <input type="text" placeholder="Enter Movie Name" id="inp" />
+      <button onclick="getMovie()">Search</button>
+      <div id="data"></div>
+      <div class="errorImg">
+          <img src="https://cdn.dribbble.com/users/183518/screenshots/1766471/agigen-404.gif" alt="">
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  let description = document.getElementById("data");
+  let errorImg = document.querySelector('.errorImg')
+  document.onkeypress =keyPress;
+
+  function keyPress(e){
+      if(e.keyCode == 13){
+        getMovie()
+      }
+  }
+
+  async function getMovie() {
+    let inp = document.getElementById("inp").value;
+    let data;
+    let res = await fetch(`http://www.omdbapi.com/?t=${inp}&apikey=56cf3cfa`);
+    data = await res.json();
+    if (inp.length > 0 && data.Response === "True") {
+      
+      showMovie(data);
+      console.log(data);
+    }
+    if (data.Response === "False" && inp.length !=0 ) {
+        description.innerHTML = null;
+        errorImg.style.display = 'block' 
+    }else if(inp.length==0) {
+        alert("Please Enter Something");
+    }
+
+  }
+
+  function showMovie(movie) {
+    description.innerHTML = null;
+    errorImg.style.display = 'none'
+    let div = document.createElement("div");
+
+    div.setAttribute('class','infoDiv')
+
+    let img = document.createElement("img");
+
+    img.src = movie.Poster;
+
+    let name = document.createElement("p");
+
+    name.innerText = `Title : ${movie.Title}`;
+
+    let rating = document.createElement("p");
+
+    
+    if(movie.imdbRating > 8.5) {
+        rating.innerText = `IMDb : ${movie.imdbRating} (Recomended)`;
+    }else{
+        rating.innerText = `IMDb : ${movie.imdbRating}`;
+    }
+
+    let runtime = document.createElement("p");
+
+    runtime.innerText = `Runtime : ${movie.Runtime}`;
+
+    let release = document.createElement("p");
+
+    release.innerText = `Released : ${movie.Released}`;
+
+    let cast = document.createElement("p");
+
+    cast.innerText = `Cast : ${movie.Actors}`;
+
+    div.append(img, name, rating, runtime, release, cast);
+
+    description.append(div);
+  }
+
+
+
+</script>
